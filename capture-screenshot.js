@@ -214,9 +214,8 @@ const buildOutputFilePath = (outputInfo, inputPath) => {
   if (!outputInfo.isDir) {
     return outputInfo.file;
   }
-  const base = path.basename(inputPath);
-  const name = base.replace(/\.(x?html?)$/i, '') || base;
-  return path.join(outputInfo.dir, `${name}.png`);
+  const baseName = deriveOutputBaseName(inputPath);
+  return path.join(outputInfo.dir, `${baseName}.png`);
 };
 
 async function main() {
@@ -378,6 +377,35 @@ async function maybeFollowIframe({ page, mode, iframeSelector, iframeIndex }) {
   const resolvedIframeUrl = new URL(iframeSrc, page.url()).href;
   await page.goto(resolvedIframeUrl, { waitUntil: ['load', 'networkidle2'] });
 }
+
+const sanitizeFileName = (value, fallback) => {
+  if (!value) {
+    return fallback;
+  }
+  const sanitized = value
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, '-')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+  return sanitized || fallback;
+};
+
+const deriveOutputBaseName = (resource) => {
+  if (isHttpUrl(resource)) {
+    try {
+      const urlObj = new URL(resource);
+      const pathname = urlObj.pathname.replace(/\/$/, '');
+      const lastSegment = pathname.split('/').filter(Boolean).pop();
+      const base = lastSegment || urlObj.hostname || 'page';
+      return sanitizeFileName(base, 'page');
+    } catch {
+      return 'page';
+    }
+  }
+  const base = path.basename(resource);
+  const withoutExt = base.replace(/\.(x?html?)$/i, '') || base;
+  return sanitizeFileName(withoutExt, 'page');
+};
 
 main().catch((err) => {
   process.stderr.write(`Failed to capture screenshot: ${err.message}\n`);

@@ -2,8 +2,9 @@
 # 通过该文件集中管理截图工具的参数，可自由添加中文注释
 
 # HTML 输入目录（留空则默认当前目录），也可以填写单个 HTML 文件或 HTTP(S) URL
-input = "."
-
+input = "./input"
+#URL示例
+#input = "https://grok.com/share/bGVnYWN5_0"
 # 输出目录（不存在会自动创建）
 output = "screenshots"
 
