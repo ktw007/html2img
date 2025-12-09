@@ -55,6 +55,4 @@ html2img/
 └── README.en.md
 ```
 
-## License
-
-This repository is internal tooling and does not ship with a public license. Add the license of your choice before redistributing.
+ktws007 (WeChat)

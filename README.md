@@ -66,6 +66,4 @@ html2img/
 └── README.md / README.en.md
 ```
 
-## 许可证
-
-当前仓库仅作为内部工具示例，未附带开源许可证。如需对外分发，请先补充适当的 License。
+ktws007（微信）
